@@ -1,15 +1,16 @@
-import { useRoutes } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
 import { WalletProvider } from './context/WalletContext';
-import routes from './routes';
+import Routes from './routes';
+import client from './graphql/client';
 
-function App() {
-  const routing = useRoutes(routes);
-
+const App = () => {
   return (
-    <WalletProvider>
-      {routing}
-    </WalletProvider>
+    <ApolloProvider client={client}>
+      <WalletProvider>
+        <Routes />
+      </WalletProvider>
+    </ApolloProvider>
   );
-}
+};
 
 export default App;

@@ -1,0 +1,25 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: DonationContract
+    network: sepolia
+    source:
+      address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99"
+      abi: Donation
+      startBlock: 7842558  # Replace with the block where your contract was deployed
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Donor
+        - Donation
+      abis:
+        - name: Donation
+          file: ./abis/Donation.json
+      eventHandlers:
+        - event: Donated(indexed address,uint256)
+          handler: handleDonation
+      file: ./src/mapping.ts

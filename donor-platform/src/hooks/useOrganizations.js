@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-// import { useQuery } from '@apollo/client';
-import { GET_ORGANIZATIONS } from '../graphql/queries';
 import { organizations } from '../utils/dummyData';
 
 export const useOrganizations = () => {
@@ -8,13 +6,7 @@ export const useOrganizations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // In a real app, we'd use this query
-  /*
-  const { data, loading, error } = useQuery(GET_ORGANIZATIONS);
-  */
-
   useEffect(() => {
-    // Simulate API loading delay
     const timer = setTimeout(() => {
       try {
         setAllOrganizations(organizations);
@@ -41,10 +33,8 @@ export const useOrganization = (id) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulate API loading delay
     const timer = setTimeout(() => {
       try {
-        // Convert id to number since our dummy data uses numeric ids
         const numId = parseInt(id, 10);
         const found = organizations.find(org => org.id === numId);
         

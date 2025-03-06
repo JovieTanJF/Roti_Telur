@@ -9,11 +9,11 @@ async function main() {
 
   // ✅ Set up provider & wallet
   const provider = new ethers.JsonRpcProvider(process.env.API_URL);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY_PAY, provider);
   console.log(`🦊 Using Wallet: ${wallet.address}`);
 
 
-  const walletAddress = "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594";
+  const walletAddress = wallet.address;
   const txCount = await provider.getTransactionCount(walletAddress);
 
   console.log(`Total Transactions Sent: ${txCount}`);
@@ -38,7 +38,7 @@ async function main() {
     const tx = await donation.connect(wallet).donate({
       value: donationAmount,
       gasLimit: 250000,
-      gasPrice: ethers.parseUnits("20", "gwei"),
+      gasPrice: ethers.parseUnits("5", "gwei"),
     });
 
     console.log(`⏳ Waiting for transaction confirmation...`);

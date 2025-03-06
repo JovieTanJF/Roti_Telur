@@ -1,13 +1,13 @@
 const config = {
     // API endpoints
-    apiEndpoint: 'https://api.example.com/v1',
-    graphqlEndpoint: 'https://api.thegraph.com/subgraphs/name/yourdummysubgraph/donation-platform',
+    apiEndpoint: 'https://api.studio.thegraph.com/query',
+    graphqlEndpoint: 'https://api.studio.thegraph.com/query/105870/test-subgraph/version/latest',
     
     // Blockchain explorer URLs
-    etherscanUrl: 'https://etherscan.io',
+    etherscanUrl: 'https://sepolia.etherscan.io',
     
     // Smart contract addresses
-    donationContractAddress: '0x1234567890abcdef1234567890abcdef12345678',
+    donationContractAddress: '0xe455621A437ea29cb6a645ed9E4C73E94C233a99',
     
     // Application settings
     appName: 'DonorChain',
@@ -15,7 +15,7 @@ const config = {
     
     // Default transaction settings
     defaultGasLimit: 150000,
-    minDonationAmount: 0.01, // in ETH
+    minDonationAmount: 0.001, // in ETH
   };
   
   export default config;

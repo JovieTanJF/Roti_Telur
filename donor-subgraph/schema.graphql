@@ -1,0 +1,28 @@
+type Donor @entity {
+  id: ID!
+  address: Bytes!
+  totalDonated: BigInt!
+  donationCount: BigInt!
+  donations: [Donation!]! @derivedFrom(field: "donor")
+}
+
+type Donation @entity {
+  id: ID!
+  donor: Donor!
+  amount: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  transactionHash: Bytes!
+  organization: Organization! # ✅ Add this field
+}
+
+
+type Organization @entity {
+  id: ID!
+  address: Bytes!
+  name: String!
+  description: String
+  totalReceived: BigInt!
+  donationCount: BigInt!
+  donations: [Donation!]! @derivedFrom(field: "organization")
+}

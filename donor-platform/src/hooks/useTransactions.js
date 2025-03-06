@@ -1,85 +1,96 @@
 import { useState, useEffect } from 'react';
-// import { useQuery } from '@apollo/client';
-import { GET_DONATIONS } from '../graphql/queries';
+import { useQuery } from '@apollo/client';
 import { useWallet } from '../context/WalletContext';
-import { transactions, pendingTransactions } from '../utils/dummyData';
+import { ethers } from 'ethers';
+import { DONATIONS_QUERY, DONATION_BY_ID_QUERY } from '../graphql/client';
 
 export const useTransactions = () => {
   const { address } = useWallet();
-  const [allTransactions, setAllTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // In a real app, we'd use this query
-  /*
-  const { data, loading, error } = useQuery(GET_DONATIONS, {
-    variables: { donor: address },
-    skip: !address,
-  });
-  */
-
+  const [formattedTransactions, setFormattedTransactions] = useState([]);
+  
+  // Use the specific address for querying if needed
+  const walletAddress = address || '0xf355ef143B61A718367eC781CA2c788642F42bb0';
+  
+  // Use dummy data for now since we're having GraphQL issues
   useEffect(() => {
-    // Simulate API loading delay
+    // Simulate loading delay
     const timer = setTimeout(() => {
-      try {
-        // Combine transactions and pending transactions
-        const combined = [...pendingTransactions, ...transactions];
-        
-        // Sort by timestamp (newest first)
-        const sorted = combined.sort((a, b) => 
-          new Date(b.timestamp) - new Date(a.timestamp)
-        );
-        
-        setAllTransactions(sorted);
-        setLoading(false);
-      } catch (err) {
-        setError('Error loading transactions');
-        setLoading(false);
-      }
+      setFormattedTransactions([
+        {
+          id: '0x1234567890abcdef1234567890abcdef12345678901234567890abcdef123456',
+          donor: walletAddress,
+          amount: '0.5 ETH',
+          timestamp: new Date().toISOString(),
+          status: 'Completed',
+          confirmations: 12,
+          gasUsed: '0.0001 ETH',
+          recipientName: 'Save The Children',
+          recipientAddress: '0x2345678901abcdef2345678901abcdef23456789',
+        },
+        {
+          id: '0x2345678901abcdef2345678901abcdef23456789012345678901abcdef234567',
+          donor: walletAddress,
+          amount: '0.25 ETH',
+          timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+          status: 'Completed',
+          confirmations: 12,
+          gasUsed: '0.0001 ETH',
+          recipientName: 'Red Cross',
+          recipientAddress: '0x3456789012abcdef3456789012abcdef34567890',
+        },
+        {
+          id: '0x3456789012abcdef3456789012abcdef34567890123456789012abcdef345678',
+          donor: walletAddress,
+          amount: '0.1 ETH',
+          timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+          status: 'Completed',
+          confirmations: 12,
+          gasUsed: '0.0001 ETH',
+          recipientName: 'UNICEF',
+          recipientAddress: '0x4567890123abcdef4567890123abcdef45678901',
+        }
+      ]);
     }, 1000);
-
+    
     return () => clearTimeout(timer);
-  }, [address]);
+  }, [walletAddress]);
 
   return {
-    transactions: allTransactions,
-    loading,
-    error,
+    transactions: formattedTransactions,
+    loading: false,
+    error: null,
   };
 };
 
 export const useTransaction = (id) => {
-  const [transaction, setTransaction] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const [formattedTransaction, setFormattedTransaction] = useState(null);
+  
+  // Use dummy data for now
   useEffect(() => {
-    // Simulate API loading delay
-    const timer = setTimeout(() => {
-      try {
-        // Find the transaction in our dummy data
-        const allTxs = [...transactions, ...pendingTransactions];
-        const found = allTxs.find(tx => tx.id === id);
-        
-        if (found) {
-          setTransaction(found);
-        } else {
-          setError('Transaction not found');
-        }
-        
-        setLoading(false);
-      } catch (err) {
-        setError('Error loading transaction details');
-        setLoading(false);
-      }
-    }, 800);
-
-    return () => clearTimeout(timer);
+    if (id) {
+      // Simulate loading delay
+      const timer = setTimeout(() => {
+        setFormattedTransaction({
+          id: id,
+          donor: '0xf355ef143B61A718367eC781CA2c788642F42bb0',
+          amount: '0.5 ETH',
+          timestamp: new Date().toISOString(),
+          status: 'Completed',
+          confirmations: 12,
+          gasUsed: '0.0001 ETH',
+          blockNumber: '12345678',
+          recipientName: 'Save The Children',
+          recipientAddress: '0x2345678901abcdef2345678901abcdef23456789',
+        });
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
   }, [id]);
 
   return {
-    transaction,
-    loading,
-    error,
+    transaction: formattedTransaction,
+    loading: !formattedTransaction && !!id,
+    error: null,
   };
 };

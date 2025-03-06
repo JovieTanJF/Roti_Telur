@@ -3,11 +3,14 @@ import { useOrganizations } from '../hooks/useOrganizations';
 import Card, { CardHeader, CardTitle, CardContent } from '../components/Card';
 import Button from '../components/Button';
 import { formatAddress } from '../utils/formatters';
+import DonationModal from '../components/DonationModal';
 
 const Recipients = () => {
   const { organizations, loading, error } = useOrganizations();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedOrg, setSelectedOrg] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Get unique categories
   const categories = organizations ? ['All', ...new Set(organizations.map(org => org.category))] : ['All'];
@@ -19,6 +22,17 @@ const Recipients = () => {
                          org.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   }) : [];
+
+  const handleDonateClick = (org) => {
+    setSelectedOrg(org);
+    setIsModalOpen(true);
+  };
+
+  const handleDonationSuccess = (receipt) => {
+    console.log('Donation successful:', receipt);
+    // You can add a success notification here if needed
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="container mx-auto px-4 py-6">
@@ -116,7 +130,12 @@ const Recipients = () => {
                 </div>
                 
                 <div className="px-4 py-3 bg-purple-500/5 border-t border-purple-500/10">
-                  <Button variant="primary" fullWidth={true} size="sm">
+                  <Button 
+                    variant="primary" 
+                    fullWidth={true} 
+                    size="sm"
+                    onClick={() => handleDonateClick(org)}
+                  >
                     Donate Now
                   </Button>
                 </div>
@@ -124,6 +143,18 @@ const Recipients = () => {
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedOrg && (
+        <DonationModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedOrg(null);
+          }}
+          organization={selectedOrg}
+          onDonate={handleDonationSuccess}
+        />
       )}
     </div>
   );

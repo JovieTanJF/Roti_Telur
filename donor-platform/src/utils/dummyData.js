@@ -79,58 +79,40 @@ export const transactions = [
   export const organizations = [
     {
       id: 1,
-      name: "Global Relief Foundation",
-      address: "0xabcd...ef01",
-      description: "Providing humanitarian aid to regions affected by natural disasters and conflicts.",
-      totalDonations: "12.5 ETH",
-      category: "Humanitarian",
-      logo: "https://placekitten.com/64/64", // Replace with real logos in production
+      name: "Save The Children",
+      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      description: "Supporting children's education and healthcare worldwide",
+      totalDonations: "2.5 ETH",
+      category: "Education",
+      logo: "/logos/org-1.png"
     },
     {
       id: 2,
-      name: "Children's Education Fund",
-      address: "0x2345...6789",
-      description: "Supporting educational opportunities for underprivileged children worldwide.",
-      totalDonations: "8.2 ETH",
-      category: "Education",
-      logo: "https://placekitten.com/65/65",
+      name: "Ocean Cleanup Initiative",
+      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      description: "Removing plastic waste from our oceans",
+      totalDonations: "1.8 ETH",
+      category: "Environment",
+      logo: "/logos/org-2.png"
     },
     {
       id: 3,
-      name: "Ocean Conservation Project",
-      address: "0x3456...7890",
-      description: "Protecting marine ecosystems and combating ocean pollution.",
-      totalDonations: "6.7 ETH",
-      category: "Environment",
-      logo: "https://placekitten.com/66/66",
+      name: "Tech For All",
+      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      description: "Bringing technology education to underserved communities",
+      totalDonations: "3.2 ETH",
+      category: "Technology",
+      logo: "/logos/org-3.png"
     },
     {
       id: 4,
-      name: "Disaster Relief Fund",
-      address: "0x4567...8901",
-      description: "Providing immediate assistance to communities affected by natural disasters.",
-      totalDonations: "15.3 ETH",
-      category: "Emergency Relief",
-      logo: "https://placekitten.com/67/67",
-    },
-    {
-      id: 5,
-      name: "Renewable Energy Initiative",
-      address: "0x5678...9012",
-      description: "Advancing clean energy projects in developing regions.",
-      totalDonations: "9.1 ETH",
-      category: "Sustainability",
-      logo: "https://placekitten.com/68/68",
-    },
-    {
-      id: 6,
-      name: "Wildlife Conservation Trust",
-      address: "0x6789...0123",
-      description: "Protecting endangered species and preserving natural habitats.",
-      totalDonations: "7.8 ETH",
-      category: "Conservation",
-      logo: "https://placekitten.com/69/69",
-    },
+      name: "Global Health Fund",
+      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      description: "Providing medical care to those in need",
+      totalDonations: "4.1 ETH",
+      category: "Healthcare",
+      logo: "/logos/org-4.png"
+    }
   ];
   
   export const topDonors = [
