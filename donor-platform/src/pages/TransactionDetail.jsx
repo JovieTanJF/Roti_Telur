@@ -42,6 +42,23 @@ const TransactionDetail = () => {
     }
   }, [transaction]);
 
+  const formatTransactionHash = (hash) => {
+    if (!hash) return '';
+    
+    // Remove any suffix after a dash (like -16)
+    let cleanHash = hash.split('-')[0];
+    
+    // Ensure it starts with 0x
+    cleanHash = cleanHash.startsWith('0x') ? cleanHash : `0x${cleanHash}`;
+    
+    // Ensure even number of digits (excluding 0x)
+    if ((cleanHash.length - 2) % 2 !== 0) {
+      cleanHash = `0x0${cleanHash.substring(2)}`;
+    }
+    
+    return cleanHash.toLowerCase();
+  };
+
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="flex items-center mb-6">
@@ -210,17 +227,17 @@ const TransactionDetail = () => {
             </Card>
             
             <div className="mt-6">
-              <a 
-                href={`https://sepolia.etherscan.io/tx/${transaction.id || transaction.transactionHash}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-purple-500 hover:text-purple-600 text-sm flex items-center"
-              >
-                <span>View on Etherscan (Sepolia)</span>
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                </svg>
-              </a>
+            <a 
+              href={`https://sepolia.etherscan.io/tx/${formatTransactionHash(transaction.id || transaction.transactionHash)}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-500 hover:text-purple-600 text-sm flex items-center"
+            >
+              <span>View on Etherscan (Sepolia)</span>
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </a>
             </div>
           </div>
         </div>

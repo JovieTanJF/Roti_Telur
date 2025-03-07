@@ -99,7 +99,7 @@ const Dashboard = () => {
       name: 'Make Donation',
       description: 'Support a cause you care about',
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <svg xmlns="assets/1.jpg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
         </svg>
       ),
@@ -110,7 +110,7 @@ const Dashboard = () => {
       name: 'Transaction History',
       description: 'View your donation history',
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <svg xmlns="assets/2.jpg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="16" y1="2" x2="16" y2="6"></line>
           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -124,7 +124,7 @@ const Dashboard = () => {
       name: 'Recipient Organizations',
       description: 'Explore verified recipients',
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <svg xmlns="assets/3.jpg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -138,7 +138,7 @@ const Dashboard = () => {
       name: 'Impact Report',
       description: 'See how your donations help',
       icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+        <svg xmlns="assets/1.jpg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
         </svg>
       ),
@@ -482,7 +482,7 @@ const Dashboard = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-16 h-16 rounded-md overflow-hidden bg-gradient-to-br from-purple-500/20 to-lavender-500/20 flex-shrink-0 shadow-sm">
                         <img
-                          src={`/api/placeholder/${160}/${160}?text=News${index+1}`}
+                          src={`../assets/${index % 3 + 1}.jpg`}
                           alt={update.title}
                           className="w-full h-full object-cover"
                         />
@@ -507,7 +507,7 @@ const Dashboard = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-16 h-16 rounded-md overflow-hidden bg-gradient-to-br from-purple-500/20 to-lavender-500/20 flex-shrink-0 shadow-sm">
                         <img
-                          src={`/api/placeholder/${160}/${160}?text=News${index+1}`}
+                          src={`../assets/${index % 3 + 1}.jpg`}
                           alt={update.title}
                           className="w-full h-full object-cover"
                         />
