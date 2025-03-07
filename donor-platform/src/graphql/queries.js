@@ -1,63 +1,71 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
 
-export const GET_DONATIONS = gql`
-  query GetDonations($donor: String) {
-    donations(where: { donor: $donor }) {
-      id
-      transactionHash
-      donor {
-        address
-      }
-      recipient {
-        address
-        name
-      }
-      amount
-      timestamp
-      blockNumber
-    }
-  }
-`;
-
-export const GET_DONATION_BY_ID = gql`
-  query GetDonationById($id: ID!) {
-    donation(id: $id) {
-      id
-      transactionHash
-      donor {
-        address
-      }
-      recipient {
-        address
-        name
-      }
-      amount
-      timestamp
-      blockNumber
-    }
-  }
-`;
-
-export const GET_ORGANIZATIONS = gql`
-  query GetOrganizations {
-    organizations {
-      id
-      name
-      address
-      description
-      totalReceived
-      donationCount
-    }
-  }
-`;
-
-export const GET_TOP_DONORS = gql`
-  query GetTopDonors {
-    donors(orderBy: totalDonated, orderDirection: desc, first: 5) {
+// Query to get all donations for a specific wallet address
+export const GET_WALLET_DONATIONS = gql`
+  query GetWalletDonations($address: Bytes!) {
+    donors(where: { address: $address }) {
       id
       address
       totalDonated
       donationCount
+      donations {
+        id
+        amount
+        timestamp
+        blockNumber
+        transactionHash
+      }
+    }
+  }
+`;
+
+// Query to get a specific donation by transaction hash
+export const GET_DONATION_BY_TRANSACTION = gql`
+  query GetDonationByTransaction($transactionHash: Bytes!) {
+    donations(where: { transactionHash: $transactionHash }) {
+      id
+      amount
+      timestamp
+      blockNumber
+      transactionHash
+      donor {
+        id
+        address
+      }
+    }
+  }
+`;
+
+// Query to get a specific donation by ID
+export const GET_DONATION_BY_ID = gql`
+  query GetDonationById($id: ID!) {
+    donation(id: $id) {
+      id
+      amount
+      timestamp
+      blockNumber
+      transactionHash
+      donor {
+        id
+        address
+      }
+    }
+  }
+`;
+
+// Optional: Query to get all donations (limited to most recent 100)
+export const GET_ALL_DONATIONS = gql`
+  query GetAllDonations {
+    donations(first: 100, orderBy: timestamp, orderDirection: desc) {
+      id
+      amount
+      timestamp
+      blockNumber
+      transactionHash
+      donor {
+        id
+        address
+      }
     }
   }
 `;

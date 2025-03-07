@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { useWallet } from '../context/WalletContext';
 import { ethers } from 'ethers';
-import { DONATIONS_QUERY, DONATION_BY_ID_QUERY } from '../graphql/client';
+//import { DONATIONS_QUERY, DONATION_BY_ID_QUERY } from '../graphql/client';
 
 export const useTransactions = () => {
   const { address } = useWallet();

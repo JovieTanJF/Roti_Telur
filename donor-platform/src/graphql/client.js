@@ -1,88 +1,61 @@
-import { QueryClient } from '@tanstack/react-query';
-import { gql } from 'graphql-request';
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloLink, HttpLink, from } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+import { graphApiConfig } from '../config/api';
 
-// Create a QueryClient instance
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // Data is fresh for 1 minute
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
+// Create an error handling link
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.error(
+        `[GraphQL error in operation ${operation.operationName}]: Message: ${message}, Location: ${locations}, Path: ${path}`
+      );
+    });
+  }
+  if (networkError) {
+    console.error(`[Network error in operation ${operation.operationName}]: ${networkError}`);
+  }
 });
 
-// GraphQL endpoint
-export const GRAPHQL_ENDPOINT = 'https://api.studio.thegraph.com/query/105870/test-subgraph/version/latest';
-
-// Define your queries
-export const DONORS_QUERY = gql`
-  query GetDonors($first: Int) {
-    donors(first: $first) {
-      id
-      address
-      totalDonated
-      donationCount
+// Create a middleware link for logging requests
+const loggingLink = new ApolloLink((operation, forward) => {
+  console.log(`GraphQL Request: ${operation.operationName}`, operation.variables);
+  
+  return forward(operation).map((response) => {
+    if (!response.data) {
+      console.warn(`No data returned for operation: ${operation.operationName}`);
     }
-  }
-`;
+    return response;
+  });
+});
 
-export const DONATIONS_QUERY = gql`
-  query GetDonations($first: Int, $donor: String) {
-    donations(first: $first, where: { donor: $donor }) {
-      id
-      donor {
-        id
-        address
-      }
-      recipient {
-        id
-        address
-        name
-      }
-      amount
-      timestamp
-    }
-  }
-`;
+// Create the HTTP link with the correct endpoint
+const httpLink = new HttpLink({
+  uri: 'https://api.studio.thegraph.com/query/105870/test-subgraph/version/latest',
+  // If your subgraph requires authentication, add headers here
+  // headers: { authorization: `Bearer ${token}` }
+});
 
-export const DONATION_BY_ID_QUERY = gql`
-  query GetDonationById($id: ID!) {
-    donation(id: $id) {
-      id
-      donor {
-        id
-        address
-      }
-      recipient {
-        id
-        address
-        name
-      }
-      amount
-      timestamp
-    }
-  }
-`;
+// Combine all the links
+const link = from([
+  errorLink,
+  loggingLink,
+  httpLink
+]);
 
-// Create Apollo Client for use with ApolloProvider
+// Create the Apollo Client with the combined links
 const client = new ApolloClient({
-  link: new HttpLink({
-    uri: GRAPHQL_ENDPOINT,
-  }),
+  link,
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'network-only',
-      errorPolicy: 'ignore',
+      errorPolicy: 'all',
     },
     query: {
       fetchPolicy: 'network-only',
       errorPolicy: 'all',
     },
-  },
+  }
 });
 
-// Add default export for App.jsx
 export default client;

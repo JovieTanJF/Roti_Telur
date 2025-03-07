@@ -8,7 +8,7 @@ dataSources:
     source:
       address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99"
       abi: Donation
-      startBlock: 7842558
+      startBlock: 7842561
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

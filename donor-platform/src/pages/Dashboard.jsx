@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+
+
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
-import { useTransactions } from '../hooks/useTransactions';
+// Import the real transactions hook instead of the dummy one
+import { useDonations } from '../hooks/useRealTransactions';
 import Card, { CardHeader, CardTitle, CardContent, CardFooter } from '../components/Card';
 import Button from '../components/Button';
 import { formatDateTime, formatAddress, timeAgo } from '../utils/formatters';
@@ -9,16 +12,17 @@ import { topDonors, recentUpdates } from '../utils/dummyData';
 
 const Dashboard = () => {
   const { address, balance, formatAddress } = useWallet();
-  const { transactions, loading: txLoading } = useTransactions();
+  // Use the real transactions data from TheGraph subgraph
+  const { donations, loading: txLoading } = useDonations(address);
   const [recentTxs, setRecentTxs] = useState([]);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (transactions && transactions.length > 0) {
-      setRecentTxs(transactions.slice(0, 3));
+    if (donations && donations.length > 0) {
+      setRecentTxs(donations.slice(0, 3));
     }
-  }, [transactions]);
-
+  }, [donations]);
+  
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
     setCopied(true);
@@ -26,7 +30,7 @@ const Dashboard = () => {
     // Reset after 1 second for faster fade-out
     setTimeout(() => {
       setCopied(false);
-    }, 1500);
+    }, 1000);
   };
 
   const services = [

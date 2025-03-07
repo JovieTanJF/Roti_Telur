@@ -13,16 +13,8 @@ type Donation @entity {
   timestamp: BigInt!
   blockNumber: BigInt!
   transactionHash: Bytes!
-  organization: Organization! # ✅ Add this field
 }
 
-
-type Organization @entity {
-  id: ID!
-  address: Bytes!
-  name: String!
-  description: String
-  totalReceived: BigInt!
-  donationCount: BigInt!
-  donations: [Donation!]! @derivedFrom(field: "organization")
-}
+# Since you're not using Organization anymore, you should completely remove this entity
+# If you want to keep it for future use, make sure to remove the @derivedFrom field
+# until you add the "organization" field back to Donation

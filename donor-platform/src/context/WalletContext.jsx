@@ -1,58 +1,45 @@
-import { createContext, useContext, useState } from 'react';
-import { ethers } from 'ethers';
+import { createContext, useContext, useState, useEffect } from 'react';
+// Thirdweb imports commented out for demo mode
+// import { useAddress, useDisconnect, useNetworth } from '@thirdweb-dev/react';
 
 const WalletContext = createContext(null);
 
 export const WalletProvider = ({ children }) => {
-  const [address, setAddress] = useState(null);
+  // Use the specific wallet address instead of connecting to a real wallet
+  const specificWalletAddress = "0xf355ef143B61A718367eC781CA2c788642F42bb0";
+  
+  // Comment out real wallet connection
+  // const address = useAddress();
+  // const disconnect = useDisconnect();
+  
+  // Use the specific wallet address
+  const [address, setAddress] = useState(specificWalletAddress);
   const [balance, setBalance] = useState('0');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Always authenticated for demo
+  
+  // Fetch balance from Ethereum (simulated)
+  useEffect(() => {
+    const fetchBalance = async () => {
+      // In a real implementation, we would fetch the balance from an Ethereum provider
+      // For now, we'll use a placeholder
+      setBalance('1.25');
+    };
+    
+    if (address) {
+      fetchBalance();
+    }
+  }, [address]);
+  
   // Format the wallet address for display
   const formatAddress = (addr) => {
     if (!addr) return '';
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   };
 
-  const connectWallet = async () => {
-    try {
-      // For development, just use dummy data
-      setAddress('0xf355ef143B61A718367eC781CA2c788642F42bb0');
-      setBalance('1.25');
-      setIsAuthenticated(true);
-      return true;
-      
-      // Uncomment this for real wallet connection
-      /*
-      if (typeof window.ethereum === 'undefined') {
-        alert('Please install MetaMask to use this feature');
-        return false;
-      }
-
-      // Request account access
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const addr = await signer.getAddress();
-      const balanceWei = await provider.getBalance(addr);
-      const balanceEth = ethers.utils.formatEther(balanceWei);
-      
-      setAddress(addr);
-      setBalance(parseFloat(balanceEth).toFixed(4));
-      setIsAuthenticated(true);
-      
-      return true;
-      */
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
-      return false;
-    }
-  };
-
+  // Dummy disconnect function
   const disconnect = () => {
-    setAddress(null);
-    setBalance('0');
-    setIsAuthenticated(false);
+    console.log('Disconnect clicked - this would normally disconnect your wallet');
+    // We'll keep the user authenticated for the demo
   };
 
   return (
@@ -62,7 +49,6 @@ export const WalletProvider = ({ children }) => {
         formatAddress,
         balance,
         disconnect,
-        connectWallet,
         isAuthenticated,
       }}
     >

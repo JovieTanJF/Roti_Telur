@@ -30,11 +30,22 @@ const DonationModal = ({ isOpen, onClose, organization, onDonate }) => {
       await provider.send("eth_requestAccounts", []); // Request account access
       const signer = provider.getSigner();
 
-      // Create transaction
-      const tx = await signer.sendTransaction({
-        to: organization.address,
-        value: ethers.utils.parseEther(amount.toString()), // Use utils instead of direct parseEther
-        gasLimit: 50000
+      // Create transaction using a contract interface
+      const contractABI = [
+        {
+          "inputs": [],
+          "name": "donate",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        }
+      ];
+      const contract = new ethers.Contract(organization.address, contractABI, signer);
+
+      // Call the donate function
+      const tx = await contract.donate({
+        value: ethers.utils.parseEther(amount.toString()),
+        gasLimit: 100000  // Increased gas limit for contract interaction
       });
 
       console.log('Transaction sent:', tx.hash);

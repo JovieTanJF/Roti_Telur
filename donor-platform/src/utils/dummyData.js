@@ -80,7 +80,7 @@ export const transactions = [
     {
       id: 1,
       name: "Save The Children",
-      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99",
       description: "Supporting children's education and healthcare worldwide",
       totalDonations: "2.5 ETH",
       category: "Education",
@@ -89,7 +89,7 @@ export const transactions = [
     {
       id: 2,
       name: "Ocean Cleanup Initiative",
-      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99",
       description: "Removing plastic waste from our oceans",
       totalDonations: "1.8 ETH",
       category: "Environment",
@@ -98,7 +98,7 @@ export const transactions = [
     {
       id: 3,
       name: "Tech For All",
-      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99",
       description: "Bringing technology education to underserved communities",
       totalDonations: "3.2 ETH",
       category: "Technology",
@@ -107,7 +107,7 @@ export const transactions = [
     {
       id: 4,
       name: "Global Health Fund",
-      address: "0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594",
+      address: "0xe455621A437ea29cb6a645ed9E4C73E94C233a99",
       description: "Providing medical care to those in need",
       totalDonations: "4.1 ETH",
       category: "Healthcare",
