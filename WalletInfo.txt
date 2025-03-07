@@ -1,0 +1,10 @@
+wallet info to test:
+
+house owner,
+wallet address: 0x9a51ccf518DDB347cA9ACb7972adf5a120Fe6594
+wallet pk: da6178bf69e50f649a1bb339e2ea878db4b566eec778bee09c0504ba9fc82d88
+contract address: 0xe455621A437ea29cb6a645ed9E4C73E94C233a99
+
+normal user,
+wallet address: 0xf355ef143B61A718367eC781CA2c788642F42bb0
+wallet pk: 1eba3d7261e68364b5e82f6530818a4b9a41adbb1bddf377d1d5f049e007c8b0
