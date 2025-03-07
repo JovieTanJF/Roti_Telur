@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
+import { ethers } from 'ethers';
 import Button from '../components/Button';
 import Card, { CardHeader, CardTitle, CardDescription, CardContent } from '../components/Card';
 
 const Login = () => {
-  const { isAuthenticated, connectWallet, address, balance, formatAddress } = useWallet();
+  const { isAuthenticated, address, balance, formatAddress, setAddress, setBalance, setIsAuthenticated } = useWallet();
   const [isConnecting, setIsConnecting] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,10 +22,63 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleConnect = async () => {
+  const connectWallet = async () => {
     setIsConnecting(true);
-    await connectWallet();
-    setIsConnecting(false);
+    setError('');
+    
+    try {
+      // Check if MetaMask is installed
+      if (typeof window.ethereum === 'undefined') {
+        throw new Error('MetaMask is not installed. Please install MetaMask to continue.');
+      }
+      
+      // Request account access
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const userAddress = accounts[0];
+      
+      // Create a provider
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      
+      // Get the balance
+      const balanceWei = await provider.getBalance(userAddress);
+      const balanceEth = ethers.utils.formatEther(balanceWei);
+      const formattedBalance = parseFloat(balanceEth).toFixed(4);
+      
+      // Update wallet context
+      setAddress(userAddress);
+      setBalance(formattedBalance);
+      setIsAuthenticated(true);
+      
+      // Setup event listener for account changes
+      window.ethereum.on('accountsChanged', (accounts) => {
+        if (accounts.length === 0) {
+          // User disconnected their wallet
+          setIsAuthenticated(false);
+          setAddress('');
+          setBalance('0');
+        } else {
+          // User switched accounts
+          setAddress(accounts[0]);
+          // Fetch new balance
+          provider.getBalance(accounts[0]).then(balance => {
+            setBalance(parseFloat(ethers.utils.formatEther(balance)).toFixed(4));
+          });
+        }
+      });
+      
+      // Setup event listener for chain changes
+      window.ethereum.on('chainChanged', () => {
+        // Refresh the page on chain change
+        window.location.reload();
+      });
+      
+    } catch (err) {
+      console.error('Error connecting to MetaMask:', err);
+      setError(err.message || 'Failed to connect to MetaMask');
+      setIsAuthenticated(false);
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   return (
@@ -69,8 +124,14 @@ const Login = () => {
                     Connect your Ethereum wallet to access the donation platform and start supporting causes you care about.
                   </p>
                   
+                  {error && (
+                    <div className="bg-red-100 text-red-800 p-3 rounded-md mb-4 text-sm">
+                      {error}
+                    </div>
+                  )}
+                  
                   <Button 
-                    onClick={handleConnect}
+                    onClick={connectWallet}
                     disabled={isConnecting}
                     className="bg-purple-500 hover:bg-purple-600 text-white py-3 px-6 rounded-md font-medium transition-colors flex items-center justify-center"
                   >

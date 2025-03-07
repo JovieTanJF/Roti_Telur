@@ -4,24 +4,85 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 // Import the real transactions hook instead of the dummy one
-import { useDonations } from '../hooks/useRealTransactions';
+import { useDonations, useRealTransactions } from '../hooks/useRealTransactions';
 import Card, { CardHeader, CardTitle, CardContent, CardFooter } from '../components/Card';
 import Button from '../components/Button';
 import { formatDateTime, formatAddress, timeAgo } from '../utils/formatters';
 import { topDonors, recentUpdates } from '../utils/dummyData';
+// Import only one hook and use it consistently
 
 const Dashboard = () => {
   const { address, balance, formatAddress } = useWallet();
   // Use the real transactions data from TheGraph subgraph
-  const { donations, loading: txLoading } = useDonations(address);
+  const { loading: txLoading } = useDonations(address);
   const [recentTxs, setRecentTxs] = useState([]);
   const [copied, setCopied] = useState(false);
+  const { transactions} = useRealTransactions(address);
+  const [ethPrice, setEthPrice] = useState(1850); // Default ETH price in USD
+  const [lastDonationTime, setLastDonationTime] = useState('Never');
+  const [impactChange, setImpactChange] = useState(0);
+  const { donations, donorData } = useDonations(address);
 
   useEffect(() => {
     if (donations && donations.length > 0) {
       setRecentTxs(donations.slice(0, 3));
+      
+      // Sort donations by timestamp (newest first)
+      const sortedDonations = [...donations].sort((a, b) => 
+        new Date(b.timestamp) - new Date(a.timestamp)
+      );
+      
+      const latestTx = sortedDonations[0];
+      const txDate = new Date(latestTx.timestamp);
+      const now = new Date();
+      
+      // Calculate time difference
+      const diffTime = Math.abs(now - txDate);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) {
+        setLastDonationTime('Today');
+      } else if (diffDays === 1) {
+        setLastDonationTime('Yesterday');
+      } else {
+        setLastDonationTime(`${diffDays} days ago`);
+      }
+      
+      // Calculate impact score change
+      setImpactChange(10);
     }
   }, [donations]);
+
+  useEffect(() => {
+    if (transactions && transactions.length > 0) {
+      // Sort transactions by timestamp (newest first)
+      const sortedTransactions = [...transactions].sort((a, b) => 
+        new Date(b.timestamp) - new Date(a.timestamp)
+      );
+      
+      const latestTx = sortedTransactions[0];
+      const txDate = new Date(latestTx.timestamp);
+      const now = new Date();
+      
+      // Calculate time difference
+      const diffTime = Math.abs(now - txDate);
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) {
+        setLastDonationTime('Today');
+      } else if (diffDays === 1) {
+        setLastDonationTime('Yesterday');
+      } else {
+        setLastDonationTime(`${diffDays} days ago`);
+      }
+      
+      // Calculate impact score change (assuming 10 points per donation)
+      setImpactChange(10);
+    } else {
+      setLastDonationTime('Never');
+      setImpactChange(0);
+    }
+  }, [transactions]);
   
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(address);
@@ -216,23 +277,29 @@ const Dashboard = () => {
                 <div className="rounded-lg bg-gradient-to-b from-gray-50 to-gray-100 shadow-sm border border-gray-200 p-3 text-center transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
                   <div className="text-xs text-gray-500 mb-1">Available</div>
                   <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-lavender-500">{balance} ETH</div>
-                  <div className="text-xs text-gray-400 mt-1">≈ $2,145.30</div>
+                  <div className="text-xs text-gray-400 mt-1">≈ ${(parseFloat(balance) * ethPrice).toFixed(2)}</div>
                 </div>
                 
                 <div className="rounded-lg bg-gradient-to-b from-gray-50 to-gray-100 shadow-sm border border-gray-200 p-3 text-center transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
                   <div className="text-xs text-gray-500 mb-1">Donations</div>
-                  <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-lavender-500 to-pink-lavender-500">12</div>
-                  <div className="text-xs text-gray-400 mt-1">Last: 2 days ago</div>
+                  <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-lavender-500 to-pink-lavender-500">
+                    {donorData?.donationCount || 0}
+                  </div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    Last: {lastDonationTime}
+                  </div>
                 </div>
                 
                 <div className="rounded-lg bg-gradient-to-b from-gray-50 to-gray-100 shadow-sm border border-gray-200 p-3 text-center transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
                   <div className="text-xs text-gray-500 mb-1">Impact Score</div>
-                  <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-lavender-500 to-pink-500">87</div>
+                  <div className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-lavender-500 to-pink-500">
+                    {Math.round((donorData?.donationCount || 0) * 10)}
+                  </div>
                   <div className="text-xs text-green-500 mt-1 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3 mr-1">
                       <polyline points="18 15 12 9 6 15"></polyline>
                     </svg>
-                    12 points
+                    {impactChange} points
                   </div>
                 </div>
               </div>

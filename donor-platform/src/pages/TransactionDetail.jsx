@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useTransaction } from '../hooks/useTransactions';
+import { useRealTransaction } from '../hooks/useRealTransactions';
 import Card, { CardHeader, CardTitle, CardContent } from '../components/Card';
 import Button from '../components/Button';
-import { formatDateTime, formatAddress, getStatusColor } from '../utils/formatters';
+import { formatDateTime } from '../utils/formatters';
+
+// Helper function for status color
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'Completed':
+      return 'bg-green-100 text-green-800';
+    case 'Pending':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'Failed':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
 
 const TransactionDetail = () => {
   const { id } = useParams();
-  const { transaction, loading, error } = useTransaction(id);
+  const { transaction, loading, error } = useRealTransaction(id);
   const [progressPercentage, setProgressPercentage] = useState(0);
 
   useEffect(() => {
@@ -18,8 +32,9 @@ const TransactionDetail = () => {
         setProgressPercentage(100);
       } else {
         // For pending transactions, calculate percentage based on confirmations
+        const confirmations = transaction.confirmations || 0;
         const percentage = Math.min(
-          Math.ceil((transaction.confirmations / 12) * 100),
+          Math.ceil((confirmations / 12) * 100),
           90
         );
         setProgressPercentage(percentage);
@@ -62,14 +77,14 @@ const TransactionDetail = () => {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">Transaction Hash</h3>
-                    <p className="font-mono text-sm break-all">{transaction.id}</p>
+                    <p className="font-mono text-sm break-all">{transaction.id || transaction.transactionHash}</p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">Status</h3>
-                      <span className={`inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(transaction.status)}`}>
-                        {transaction.status}
+                      <span className={`inline-block px-2 py-1 text-xs rounded-full ${getStatusColor(transaction.status || 'Completed')}`}>
+                        {transaction.status || 'Completed'}
                       </span>
                     </div>
                     
@@ -87,8 +102,8 @@ const TransactionDetail = () => {
                     
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">To</h3>
-                      <p className="font-mono text-sm break-all">{transaction.recipientAddress}</p>
-                      <p className="text-xs text-gray-500 mt-1">{transaction.recipientName}</p>
+                      <p className="font-mono text-sm break-all">{transaction.recipient || '0xe455621A437ea29cb6a645ed9E4C73E94C233a99'}</p>
+                      <p className="text-xs text-gray-500 mt-1">{transaction.recipientName || 'Donation Contract'}</p>
                     </div>
                   </div>
                   
@@ -100,7 +115,7 @@ const TransactionDetail = () => {
                     
                     <div>
                       <h3 className="text-sm font-medium text-gray-500 mb-1">Gas Used</h3>
-                      <p className="text-sm">{transaction.gasUsed}</p>
+                      <p className="text-sm">{transaction.gasUsed || 'N/A'}</p>
                     </div>
                   </div>
                   
@@ -148,8 +163,8 @@ const TransactionDetail = () => {
                   </div>
                   
                   <div className="flex items-center">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 ${transaction.confirmations > 0 ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      {transaction.confirmations > 0 ? (
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center mr-3 ${transaction.blockNumber ? 'bg-green-100' : 'bg-gray-100'}`}>
+                      {transaction.blockNumber ? (
                         <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                         </svg>
@@ -162,8 +177,8 @@ const TransactionDetail = () => {
                     <div>
                       <p className="text-sm font-medium">Transaction Mined</p>
                       <p className="text-xs text-gray-500">
-                        {transaction.confirmations > 0 
-                          ? `Block #${transaction.blockNumber || '12345678'}` 
+                        {transaction.blockNumber 
+                          ? `Block #${transaction.blockNumber}` 
                           : 'Waiting for confirmation...'}
                       </p>
                     </div>
@@ -185,7 +200,7 @@ const TransactionDetail = () => {
                       <p className="text-sm font-medium">Transaction Confirmed</p>
                       <p className="text-xs text-gray-500">
                         {transaction.status === 'Completed' 
-                          ? `${transaction.confirmations} confirmations` 
+                          ? `${transaction.confirmations || 'Multiple'} confirmations` 
                           : 'Waiting for confirmations...'}
                       </p>
                     </div>
@@ -196,12 +211,12 @@ const TransactionDetail = () => {
             
             <div className="mt-6">
               <a 
-                href={`https://etherscan.io/tx/${transaction.id}`} 
+                href={`https://sepolia.etherscan.io/tx/${transaction.id || transaction.transactionHash}`} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-purple-500 hover:text-purple-600 text-sm flex items-center"
               >
-                <span>View on Etherscan</span>
+                <span>View on Etherscan (Sepolia)</span>
                 <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
                 </svg>

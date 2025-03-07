@@ -100,12 +100,31 @@ export const useDonationByTransaction = (txHash) => {
   const [donation, setDonation] = useState(null);
   const [queryError, setQueryError] = useState(null);
   
-  // Use Apollo Client to query TheGraph
+  // Format the transaction hash - remove any suffix after a dash and ensure proper format
+  const formatTransactionHash = (hash) => {
+    if (!hash) return null;
+    
+    // Remove any suffix after a dash (like -16)
+    let cleanHash = hash.split('-')[0];
+    
+    // Ensure it starts with 0x
+    cleanHash = cleanHash.startsWith('0x') ? cleanHash : `0x${cleanHash}`;
+    
+    // Ensure even number of digits (excluding 0x)
+    if ((cleanHash.length - 2) % 2 !== 0) {
+      cleanHash = `0x0${cleanHash.substring(2)}`;
+    }
+    
+    return cleanHash.toLowerCase();
+  };
+  
+  const formattedTxHash = formatTransactionHash(txHash);
+
   const { data, loading, error } = useQuery(GET_DONATION_BY_TRANSACTION, {
-    variables: { transactionHash: txHash?.toLowerCase() },
-    skip: !txHash,
-    fetchPolicy: 'network-only', // Ensures fresh data from the network
-    errorPolicy: 'all', // Return all errors, not just GraphQL errors
+    variables: { transactionHash: formattedTxHash },
+    skip: !formattedTxHash,
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
     onError: (error) => {
       console.error("GraphQL error in donation detail:", error);
       if (error.networkError) {
@@ -117,7 +136,7 @@ export const useDonationByTransaction = (txHash) => {
       }
     }
   });
-
+  
   // Process the data when it's received
   useEffect(() => {
     if (data && data.donations && data.donations.length > 0) {
@@ -153,6 +172,20 @@ export const useDonationByTransaction = (txHash) => {
   };
 };
 
+const formatTransactionHash = (hash) => {
+  if (!hash) return null;
+  
+  // Ensure it starts with 0x
+  let formatted = hash.startsWith('0x') ? hash : `0x${hash}`;
+  
+  // Ensure it has an even number of digits after 0x
+  if ((formatted.length - 2) % 2 !== 0) {
+    formatted = `0x0${formatted.substring(2)}`;
+  }
+  
+  return formatted.toLowerCase();
+};
+
 /**
  * Hook to get a single donation by its ID
  * @param {string} id - The donation ID
@@ -163,9 +196,9 @@ export const useDonationById = (id) => {
   const [queryError, setQueryError] = useState(null);
   
   // Use Apollo Client to query TheGraph
-  const { data, loading, error } = useQuery(GET_DONATION_BY_ID, {
-    variables: { id },
-    skip: !id,
+  const { data, loading, error } = useQuery(GET_DONATION_BY_TRANSACTION, {
+    variables: { transactionHash: formatTransactionHash(txHash) },
+    skip: !txHash,
     fetchPolicy: 'network-only',
     errorPolicy: 'all',
     onError: (error) => {
